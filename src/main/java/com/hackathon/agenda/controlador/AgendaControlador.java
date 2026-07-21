@@ -27,9 +27,25 @@ public class AgendaControlador {
     private void agregar() {
         try {
             validarCampos(true);
-            agenda.añadirContacto(new Contacto(
-                    nombre(), apellido(), telefono()));
-            operacionExitosa("Contacto agregado correctamente");
+
+            // 👇 VALIDAR QUE HAYA ESPACIO
+            if (agenda.agendaLlena()) {
+                throw new IllegalStateException("❌ Agenda llena (máximo " + agenda.getCapacidadMaxima() + " contactos)");
+            }
+
+            // 👇 VALIDAR DUPLICADO
+            Contacto nuevo = new Contacto(nombre(), apellido(), telefono());
+            if (agenda.existeContacto(nuevo)) {
+                throw new IllegalStateException("❌ El contacto " + nombre() + " " + apellido() + " ya existe");
+            }
+
+            // Ahora sí, agregar
+            boolean agregado = agenda.añadirContacto(nuevo);
+            if (!agregado) {
+                throw new IllegalStateException("❌ No se pudo agregar el contacto");
+            }
+
+            operacionExitosa("✅ Contacto agregado correctamente");
         } catch (RuntimeException ex) {
             vista.mostrarMensaje(ex.getMessage(), true);
         }

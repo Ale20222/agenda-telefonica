@@ -2,45 +2,111 @@ package com.hackathon.agenda;
 
 import com.hackathon.agenda.controlador.AgendaControlador;
 import com.hackathon.agenda.modelo.Agenda;
-
-import com.hackathon.agenda.modelo.Contacto;
+import com.hackathon.agenda.persistencia.Persistencia;
 import com.hackathon.agenda.vista.VentanaPrincipal;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        // Crear la agenda
-        Agenda agenda = new Agenda();
 
-        // Crear contactos
-        Contacto[] contactosIniciales = {
-        new Contacto("Martin", "Parra", "311444444"),
-        new Contacto("Juan", "Perez", "312555555"),
-        new Contacto("Maria", "Gomez", "313666666"),
-        new Contacto("Carlos", "Rodriguez", "314777777"),
-        new Contacto("Ana", "Martinez", "315888888"),
-        new Contacto("Luis", "Fernandez", "316999999"),
-        new Contacto("Sofia", "Lopez", "317123456"),
-        new Contacto("Pedro", "Ramirez", "318234567"),
-        new Contacto("Laura", "Torres", "319345678"),
+        // Mostrar diálogo para configurar la capacidad
+        int capacidad = mostrarDialogoCapacidad();
 
-    };
+        System.out.println("📋 Iniciando agenda con capacidad: " + capacidad);
 
-        // Mostrar el primer contacto (como en el ejemplo del profesor)
+        // Crear la agenda con la capacidad configurada
+        Agenda agenda = new Agenda(capacidad);
 
-        for (Contacto contacto : contactosIniciales) {
-            agenda.añadirContacto(contacto);
-        }
-
+        // Mostrar los contactos actuales en la consola
         System.out.println("\n===== CONTACTOS DE LA AGENDA =====");
-        agenda.listarContactos().forEach(System.out::println);
+        if (agenda.getCantidadContactos() == 0) {
+            System.out.println("(La agenda está vacía)");
+        } else {
+            agenda.listarContactos().forEach(System.out::println);
+        }
+        System.out.println("📊 Espacios libres: " + agenda.espaciosLibres() + "/" + capacidad);
+        System.out.println("===================================\n");
 
+        // Iniciar la interfaz gráfica
         SwingUtilities.invokeLater(() -> {
             VentanaPrincipal vista = new VentanaPrincipal();
             new AgendaControlador(agenda, vista);
             vista.setVisible(true);
-
+            System.out.println("🚀 Aplicación iniciada correctamente");
+            System.out.println("💾 Ruta del archivo: " + Persistencia.getRutaArchivo());
         });
+    }
+
+    /**
+     * Muestra un diálogo con un campo de texto para ingresar la capacidad
+     */
+    private static int mostrarDialogoCapacidad() {
+        // Crear un panel con un campo de texto
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        JLabel label = new JLabel("Ingresa la capacidad máxima de la agenda:");
+        label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+
+        JTextField campoCapacidad = new JTextField("10", 10);
+        campoCapacidad.setAlignmentX(JTextField.CENTER_ALIGNMENT);
+        campoCapacidad.setHorizontalAlignment(JTextField.CENTER);
+
+        JLabel ejemplo = new JLabel("(Ejemplo: 10, 15, 20, 50, 100...)");
+        ejemplo.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+        ejemplo.setFont(new java.awt.Font("Arial", java.awt.Font.ITALIC, 10));
+        ejemplo.setForeground(java.awt.Color.GRAY);
+
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(label);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(campoCapacidad);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(ejemplo);
+        panel.add(Box.createVerticalStrut(10));
+
+        // Mostrar el diálogo
+        int resultado = JOptionPane.showConfirmDialog(
+                null,
+                panel,
+                "⚙️ Configuración de Agenda",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        // Si el usuario cancela, usar 10 por defecto
+        if (resultado != JOptionPane.OK_OPTION) {
+            System.out.println("⚠️ Usando capacidad por defecto: 10");
+            return 10;
+        }
+
+        // Obtener y validar el valor ingresado
+        String input = campoCapacidad.getText().trim();
+        if (input.isEmpty()) {
+            JOptionPane.showMessageDialog(null,
+                    "No ingresaste un valor. Usando 10 por defecto.",
+                    "Advertencia",
+                    JOptionPane.WARNING_MESSAGE);
+            return 10;
+        }
+
+        try {
+            int capacidad = Integer.parseInt(input);
+            if (capacidad < 1) {
+                JOptionPane.showMessageDialog(null,
+                        "La capacidad debe ser mayor a 0. Usando 10 por defecto.",
+                        "Advertencia",
+                        JOptionPane.WARNING_MESSAGE);
+                return 10;
+            }
+            return capacidad;
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null,
+                    "'" + input + "' no es un número válido. Usando 10 por defecto.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return 10;
+        }
     }
 }
