@@ -3,9 +3,11 @@ package com.hackathon.agenda.modelo;
 import java.util.Objects;
 
 public class Contacto {
+
     private String nombre;
     private String apellido;
     private String telefono;
+
 
     public Contacto(String nombre, String apellido, String telefono) {
         this.nombre = nombre.trim();
@@ -14,14 +16,38 @@ public class Contacto {
     }
 
     // Getters y Setters
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre.trim(); }
-    public String getApellido() { return apellido; }
-    public void setApellido(String apellido) { this.apellido = apellido.trim(); }
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono.trim(); }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre.trim();
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido.trim();
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+
+        if (!validarTelefono(telefono)) {
+            throw new IllegalArgumentException("El teléfono no tiene un formato válido.");
+        }
+
+        this.telefono = telefono.trim();
+    }
 
     // Validación de teléfono con REGEX
+
     public static boolean validarTelefono(String telefono) {
 
         if (telefono == null) {
@@ -35,19 +61,35 @@ public class Contacto {
     }
 
     // CRITERIO DE IGUALDAD: Nombre y Apellido (ignorando mayúsculas)
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         Contacto contacto = (Contacto) o;
-        return Objects.equals(nombre.toLowerCase(), contacto.nombre.toLowerCase()) &&
-                Objects.equals(apellido.toLowerCase(), contacto.apellido.toLowerCase());
+
+        return nombre.equalsIgnoreCase(contacto.nombre)
+                && apellido.equalsIgnoreCase(contacto.apellido);
     }
+
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(nombre.toLowerCase(), apellido.toLowerCase());
+        return Objects.hash(
+                nombre.toLowerCase(),
+                apellido.toLowerCase()
+        );
     }
+
+
 
     @Override
     public String toString() {
