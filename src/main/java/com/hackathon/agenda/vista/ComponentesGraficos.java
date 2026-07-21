@@ -1,21 +1,20 @@
-
 package com.hackathon.agenda.vista;
 
 import java.awt.*;
-        import javax.swing.*;
-        import javax.swing.border.Border;
+import javax.swing.*;
+import javax.swing.border.Border;
 
 /** Configura la apariencia sin registrar eventos ni aplicar reglas de negocio. */
 public final class ComponentesGraficos {
 
-    public static final Color FONDO = Color.WHITE;
+    public static final Color FONDO = new Color(244, 247, 251);
     public static final Color SUPERFICIE = Color.WHITE;
-    public static final Color PRIMARIO = new Color(37, 116, 235);
+    public static final Color PRIMARIO = new Color(37, 99, 235);
     public static final Color PELIGRO = new Color(220, 38, 38);
-    public static final Color EXITO = new Color(20, 150, 70);
-    public static final Color TEXTO = Color.BLACK;
-    public static final Color TEXTO_SECUNDARIO = new Color(100, 120, 150);
-    public static final Color BORDE = new Color(1, 23, 251);
+    public static final Color EXITO = new Color(22, 163, 74);
+    public static final Color TEXTO = new Color(15, 23, 42);
+    public static final Color TEXTO_SECUNDARIO = new Color(100, 116, 139);
+    public static final Color BORDE = new Color(203, 213, 225);
 
     private static final Font FUENTE = new Font("SansSerif", Font.PLAIN, 14);
     private static final Font FUENTE_ETIQUETA = new Font("SansSerif", Font.BOLD, 13);
@@ -32,7 +31,10 @@ public final class ComponentesGraficos {
     public static JTextField crearCampoTexto(String nombreAccesible) {
         JTextField campo = new JTextField();
         campo.setFont(FUENTE);
-        campo.setPreferredSize(new Dimension(220, 38));
+        campo.setForeground(TEXTO);
+        campo.setBackground(SUPERFICIE);
+        campo.setCaretColor(PRIMARIO);
+        campo.setPreferredSize(new Dimension(240, 42));
         campo.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(BORDE),
                 BorderFactory.createEmptyBorder(8, 10, 8, 10)));
@@ -46,13 +48,13 @@ public final class ComponentesGraficos {
     }
 
     public static JButton crearBotonPeligro(String texto) {
-        return crearBoton(texto, SUPERFICIE, PELIGRO,
-                BorderFactory.createLineBorder(PELIGRO));
+        return crearBoton(texto, new Color(254, 242, 242), PELIGRO,
+                BorderFactory.createEmptyBorder(10, 14, 10, 14));
     }
 
     public static JButton crearBotonSecundario(String texto) {
-        return crearBoton(texto, SUPERFICIE, TEXTO,
-                BorderFactory.createLineBorder(BORDE));
+        return crearBoton(texto, new Color(239, 246, 255), PRIMARIO,
+                BorderFactory.createEmptyBorder(10, 14, 10, 14));
     }
 
     private static JButton crearBoton(String texto, Color fondo,
@@ -62,10 +64,12 @@ public final class ComponentesGraficos {
         boton.setForeground(letra);
         boton.setBackground(fondo);
         boton.setBorder(borde);
+        boton.setOpaque(true);
+        boton.setContentAreaFilled(true);
         boton.setFocusPainted(false);
         boton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         boton.setMargin(new Insets(9, 16, 9, 16));
-        boton.setPreferredSize(new Dimension(120, 38));
+        boton.setPreferredSize(new Dimension(125, 42));
         return boton;
     }
 

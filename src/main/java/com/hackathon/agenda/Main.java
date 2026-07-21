@@ -23,7 +23,7 @@ public class Main {
         new Contacto("Sofia", "Lopez", "317123456"),
         new Contacto("Pedro", "Ramirez", "318234567"),
         new Contacto("Laura", "Torres", "319345678"),
-        
+
     };
 
         // Mostrar el primer contacto (como en el ejemplo del profesor)
