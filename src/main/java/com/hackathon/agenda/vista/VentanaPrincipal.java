@@ -3,7 +3,6 @@ package com.hackathon.agenda.vista;
 import javax.swing.*;
 import java.awt.*;
 
-
 public class VentanaPrincipal extends JFrame {
 
     // Campos de texto del formulario
