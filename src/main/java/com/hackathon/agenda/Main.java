@@ -1,5 +1,6 @@
 package com.hackathon.agenda;
 
+import com.hackathon.agenda.controlador.AgendaControlador;
 import com.hackathon.agenda.modelo.Agenda;
 
 import com.hackathon.agenda.modelo.Contacto;
@@ -37,10 +38,9 @@ public class Main {
 
         SwingUtilities.invokeLater(() -> {
             VentanaPrincipal vista = new VentanaPrincipal();
-            vista.mostrarContactos(agenda.listarContactos());
-            vista.mostrarEspaciosLibres(agenda.espaciosLibres());
+            new AgendaControlador(agenda, vista);
             vista.setVisible(true);
+
         });
     }
 }
-
