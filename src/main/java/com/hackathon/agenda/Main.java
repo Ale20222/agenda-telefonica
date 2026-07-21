@@ -3,6 +3,7 @@ package com.hackathon.agenda;
 import com.hackathon.agenda.modelo.Agenda;
 
 import com.hackathon.agenda.modelo.Contacto;
+import com.hackathon.agenda.vista.VentanaPrincipal;
 
 import com.hackathon.agenda.vista.VentanaPrincipal;
 
@@ -61,8 +62,13 @@ public class Main {
         // Mostrar el primer contacto (como en el ejemplo del profesor)
 
         System.out.println(primerContacto);
+<<<<<<< HEAD
 
         // Mostrar todos los contactos de la agenda
+=======
+        VentanaPrincipal vista = new VentanaPrincipal();
+        vista.setVisible(true);
+>>>>>>> ad098350fbc4eca1cf82d63b031528243f6db1c8
 
         System.out.println("\n===== CONTACTOS DE LA AGENDA =====");
 
