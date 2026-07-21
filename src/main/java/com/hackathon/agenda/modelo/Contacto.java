@@ -8,13 +8,40 @@ public class Contacto {
     private String apellido;
     private String telefono;
 
+    // ========== CONSTRUCTORES ==========
+
+    /**
+     * Constructor COMPLETO - Para AGREGAR y MODIFICAR contactos
+     * VALIDA que el teléfono sea válido
+     */
     public Contacto(String nombre, String apellido, String telefono) {
-        this.nombre = nombre.trim();
-        this.apellido = apellido.trim();
-        setTelefono(telefono); // Usa el setter con validación
+        this.nombre = nombre != null ? nombre.trim() : "";
+        this.apellido = apellido != null ? apellido.trim() : "";
+
+        // ✅ Validar que el teléfono no esté vacío
+        if (telefono == null || telefono.trim().isEmpty()) {
+            throw new IllegalArgumentException("❌ El teléfono no puede estar vacío");
+        }
+
+        String telefonoLimpio = telefono.trim().replaceAll("\\s+", "");
+        if (!validarTelefono(telefonoLimpio)) {
+            throw new IllegalArgumentException("❌ El teléfono '" + telefono + "' no tiene un formato válido");
+        }
+        this.telefono = telefonoLimpio;
     }
 
-    // Getters y Setters
+    /**
+     * Constructor para BÚSQUEDA - NO valida el teléfono
+     * Solo usa nombre y apellido para buscar
+     */
+    public Contacto(String nombre, String apellido) {
+        this.nombre = nombre != null ? nombre.trim() : "";
+        this.apellido = apellido != null ? apellido.trim() : "";
+        this.telefono = ""; // Teléfono vacío para búsqueda
+    }
+
+    // ========== GETTERS Y SETTERS ==========
+
     public String getNombre() {
         return nombre;
     }
@@ -47,63 +74,49 @@ public class Contacto {
         }
 
         String telefonoLimpio = telefono.trim().replaceAll("\\s+", "");
-
-        // 🔥 VALIDACIÓN MÁS FLEXIBLE
         if (!validarTelefono(telefonoLimpio)) {
-            throw new IllegalArgumentException("❌ El teléfono '" + telefono + "' no tiene un formato válido. " +
-                    "Formatos aceptados: 311444444, +57311444444, 311 444 444, 311-444-444");
+            throw new IllegalArgumentException("❌ El teléfono '" + telefono + "' no tiene un formato válido");
         }
 
         this.telefono = telefonoLimpio;
     }
 
-    /**
-     * 🔥 VALIDACIÓN DE TELÉFONO MEJORADA (Acepta múltiples formatos)
-     */
+    // ========== VALIDACIÓN DE TELÉFONO ==========
+
     public static boolean validarTelefono(String telefono) {
         if (telefono == null || telefono.trim().isEmpty()) {
             return false;
         }
 
         String telefonoLimpio = telefono.trim().replaceAll("\\s+", "");
-
-        // 🔥 FORMATOS ACEPTADOS:
-        // - 311444444 (7-15 dígitos, solo números)
-        // - +57311444444 (con prefijo internacional)
-        // - 311-444-444 (con guiones)
-        // - 311 444 444 (con espacios)
-        // - 311.444.444 (con puntos)
-
-        String regex = "^(\\+\\d{1,3})?[0-9]{7,15}$";
-
-        // Limpiar caracteres especiales para la validación
         String soloNumeros = telefonoLimpio.replaceAll("[+\\-.]", "");
 
-        // Si después de limpiar solo hay números, validar longitud
         if (soloNumeros.matches("\\d+")) {
             int longitud = soloNumeros.length();
-            // Aceptar entre 7 y 15 dígitos (estándar internacional)
             return longitud >= 7 && longitud <= 15;
         }
 
         return false;
     }
 
+    // ========== CRITERIO DE IGUALDAD ==========
+
     /**
-     * 🔥 CRITERIO DE IGUALDAD: Por teléfono (más fiable)
-     * Dos contactos son iguales si tienen el mismo teléfono
+     * ✅ CRITERIO DE IGUALDAD: Nombre y Apellido (ignorando mayúsculas)
+     * Según el documento: "Dos contactos se consideran iguales si tienen el mismo nombre y apellido"
      */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Contacto contacto = (Contacto) o;
-        return Objects.equals(telefono, contacto.telefono);
+        return Objects.equals(nombre.toLowerCase(), contacto.nombre.toLowerCase()) &&
+                Objects.equals(apellido.toLowerCase(), contacto.apellido.toLowerCase());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(telefono);
+        return Objects.hash(nombre.toLowerCase(), apellido.toLowerCase());
     }
 
     @Override

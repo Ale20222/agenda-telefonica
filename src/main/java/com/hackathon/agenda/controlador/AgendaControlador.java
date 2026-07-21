@@ -24,22 +24,20 @@ public class AgendaControlador {
         vista.getBtnLimpiar().addActionListener(e -> vista.limpiarCampos());
     }
 
+    // ========== AGREGAR ==========
     private void agregar() {
         try {
             validarCampos(true);
 
-            // 👇 VALIDAR QUE HAYA ESPACIO
             if (agenda.agendaLlena()) {
                 throw new IllegalStateException("❌ Agenda llena (máximo " + agenda.getCapacidadMaxima() + " contactos)");
             }
 
-            // 👇 VALIDAR DUPLICADO
             Contacto nuevo = new Contacto(nombre(), apellido(), telefono());
             if (agenda.existeContacto(nuevo)) {
                 throw new IllegalStateException("❌ El contacto " + nombre() + " " + apellido() + " ya existe");
             }
 
-            // Ahora sí, agregar
             boolean agregado = agenda.añadirContacto(nuevo);
             if (!agregado) {
                 throw new IllegalStateException("❌ No se pudo agregar el contacto");
@@ -54,54 +52,90 @@ public class AgendaControlador {
     private void modificar() {
         try {
             exigirSeleccion();
-            validarCampos(true);
-            agenda.modificarTelefono(nombre(), apellido(), telefono());
-            operacionExitosa("Telefono modificado correctamente");
+
+            // ✅ Validar que los campos NO estén vacíos
+            if (nombre().isEmpty() || apellido().isEmpty()) {
+                throw new IllegalArgumentException("❌ Nombre y apellido son obligatorios");
+            }
+
+            // ✅ Validar el teléfono (para modificar SÍ debe ser válido)
+            if (!Contacto.validarTelefono(telefono())) {
+                throw new IllegalArgumentException("❌ El teléfono no tiene un formato válido (ej: 600123456)");
+            }
+
+            // Verificar que el contacto existe
+            Contacto contacto = new Contacto(nombre(), apellido(), telefono());
+            if (!agenda.existeContacto(contacto)) {
+                throw new IllegalStateException("❌ El contacto " + nombre() + " " + apellido() + " no existe");
+            }
+
+            boolean modificado = agenda.modificarTelefono(nombre(), apellido(), telefono());
+            if (!modificado) {
+                throw new IllegalStateException("❌ No se pudo modificar el teléfono");
+            }
+
+            operacionExitosa("✅ Teléfono modificado correctamente");
         } catch (RuntimeException ex) {
             vista.mostrarMensaje(ex.getMessage(), true);
         }
     }
 
+    // ========== ELIMINAR ==========
     private void eliminar() {
         try {
             exigirSeleccion();
-            boolean eliminado = agenda.eliminarContacto(
-                    new Contacto(nombre(), apellido(), telefono()));
-            if (!eliminado) {
-                throw new IllegalStateException("No se encontro el contacto");
+
+            // ✅ Validar que los campos NO estén vacíos
+            if (nombre().isEmpty() || apellido().isEmpty()) {
+                throw new IllegalArgumentException("❌ Nombre y apellido son obligatorios");
             }
-            operacionExitosa("Contacto eliminado correctamente");
+
+            Contacto contacto = new Contacto(nombre(), apellido(), "");
+            boolean eliminado = agenda.eliminarContacto(contacto);
+            if (!eliminado) {
+                throw new IllegalStateException("❌ No se encontró el contacto");
+            }
+            operacionExitosa("✅ Contacto eliminado correctamente");
         } catch (RuntimeException ex) {
             vista.mostrarMensaje(ex.getMessage(), true);
         }
     }
 
+    // ========== BUSCAR (CORREGIDO) ==========
     private void buscar() {
         try {
-            validarCampos(false);
+            // ✅ Validación específica para búsqueda (SOLO nombre y apellido)
+            if (nombre().isEmpty() || apellido().isEmpty()) {
+                throw new IllegalArgumentException("❌ Nombre y apellido son obligatorios para buscar");
+            }
+
             String telefonoEncontrado = agenda.buscarContacto(nombre(), apellido());
             if (telefonoEncontrado == null) {
-                throw new IllegalStateException("No se encontro el contacto");
+                throw new IllegalStateException("❌ No se encontró el contacto " + nombre() + " " + apellido());
             }
-            vista.cargarDatosEnFormulario(nombre(), apellido(), telefonoEncontrado);
-            vista.mostrarMensaje("Contacto encontrado", false);
+
+            // ✅ Cargar el teléfono encontrado en el campo
+            vista.getTxtTelefono().setText(telefonoEncontrado);
+            vista.mostrarMensaje("✅ Contacto encontrado - Teléfono: " + telefonoEncontrado, false);
+
         } catch (RuntimeException ex) {
             vista.mostrarMensaje(ex.getMessage(), true);
         }
     }
 
+    // ========== VALIDACIONES ==========
     private void validarCampos(boolean validarTelefono) {
         if (nombre().isEmpty() || apellido().isEmpty()) {
-            throw new IllegalArgumentException("Nombre y apellido son obligatorios");
+            throw new IllegalArgumentException("❌ Nombre y apellido son obligatorios");
         }
         if (validarTelefono && !Contacto.validarTelefono(telefono())) {
-            throw new IllegalArgumentException("El telefono no tiene un formato valido");
+            throw new IllegalArgumentException("❌ El teléfono no tiene un formato válido (ej: 600123456)");
         }
     }
 
     private void exigirSeleccion() {
         if (vista.getTablaContactos().getSelectedRow() < 0) {
-            throw new IllegalStateException("Selecciona un contacto de la tabla");
+            throw new IllegalStateException("❌ Selecciona un contacto de la tabla");
         }
     }
 

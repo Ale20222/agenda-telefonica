@@ -10,7 +10,6 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) {
 
-        // Mostrar diálogo para configurar la capacidad
         int capacidad = mostrarDialogoCapacidad();
 
         System.out.println("📋 Iniciando agenda con capacidad: " + capacidad);
@@ -18,7 +17,9 @@ public class Main {
         // Crear la agenda con la capacidad configurada
         Agenda agenda = new Agenda(capacidad);
 
-        // Mostrar los contactos actuales en la consola
+        // ✅ Comentado: Ya no se agregan contactos de prueba automáticamente
+        // agregarContactosDePrueba(agenda);
+
         System.out.println("\n===== CONTACTOS DE LA AGENDA =====");
         if (agenda.getCantidadContactos() == 0) {
             System.out.println("(La agenda está vacía)");
@@ -28,7 +29,6 @@ public class Main {
         System.out.println("📊 Espacios libres: " + agenda.espaciosLibres() + "/" + capacidad);
         System.out.println("===================================\n");
 
-        // Iniciar la interfaz gráfica
         SwingUtilities.invokeLater(() -> {
             VentanaPrincipal vista = new VentanaPrincipal();
             new AgendaControlador(agenda, vista);
@@ -38,11 +38,8 @@ public class Main {
         });
     }
 
-    /**
-     * Muestra un diálogo con un campo de texto para ingresar la capacidad
-     */
+    // ========== MÉTODO PARA MOSTRAR DIÁLOGO DE CAPACIDAD ==========
     private static int mostrarDialogoCapacidad() {
-        // Crear un panel con un campo de texto
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
@@ -66,7 +63,6 @@ public class Main {
         panel.add(ejemplo);
         panel.add(Box.createVerticalStrut(10));
 
-        // Mostrar el diálogo
         int resultado = JOptionPane.showConfirmDialog(
                 null,
                 panel,
@@ -75,13 +71,11 @@ public class Main {
                 JOptionPane.QUESTION_MESSAGE
         );
 
-        // Si el usuario cancela, usar 10 por defecto
         if (resultado != JOptionPane.OK_OPTION) {
             System.out.println("⚠️ Usando capacidad por defecto: 10");
             return 10;
         }
 
-        // Obtener y validar el valor ingresado
         String input = campoCapacidad.getText().trim();
         if (input.isEmpty()) {
             JOptionPane.showMessageDialog(null,

@@ -69,7 +69,7 @@ public class Agenda {
 
     public String buscarContacto(String nombre, String apellido) {
         if (nombre == null || apellido == null) return null;
-        Contacto buscado = new Contacto(nombre, apellido, "");
+        Contacto buscado = new Contacto(nombre, apellido);
         int index = contactos.indexOf(buscado);
         return index != -1 ? contactos.get(index).getTelefono() : null;
     }
@@ -85,7 +85,7 @@ public class Agenda {
 
     public boolean modificarTelefono(String nombre, String apellido, String nuevoTelefono) {
         if (!Contacto.validarTelefono(nuevoTelefono)) return false;
-        Contacto buscado = new Contacto(nombre, apellido, "");
+        Contacto buscado = new Contacto(nombre, apellido);
         int index = contactos.indexOf(buscado);
         if (index != -1) {
             contactos.get(index).setTelefono(nuevoTelefono);

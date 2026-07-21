@@ -62,7 +62,12 @@ public class VentanaPrincipal extends JFrame {
         tablaContactos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         configurarTabla();
         tablaContactos.getSelectionModel()
-                .addListSelectionListener(e -> cargarFilaSeleccionada());
+                .addListSelectionListener(e -> {
+                    // ✅ Solo cargar si NO está ajustando la selección
+                    if (!e.getValueIsAdjusting()) {
+                        cargarFilaSeleccionada();
+                    }
+                });
 
         lblEstado = ComponentesGraficos.crearEtiquetaEstado();
         lblEspacios = new JLabel("Espacios libres: 0");
@@ -218,13 +223,15 @@ public class VentanaPrincipal extends JFrame {
         panelFormulario.add(campo, gbc);
     }
 
+    // ✅ CORREGIDO: Solo carga si hay una fila seleccionada válida
     private void cargarFilaSeleccionada() {
         int fila = tablaContactos.getSelectedRow();
-        if (fila >= 0) {
+        if (fila >= 0 && fila < modeloTabla.getRowCount()) {
             cargarDatosEnFormulario(
                     modeloTabla.getValueAt(fila, 0).toString(),
                     modeloTabla.getValueAt(fila, 1).toString(),
-                    modeloTabla.getValueAt(fila, 2).toString());
+                    modeloTabla.getValueAt(fila, 2).toString()
+            );
         }
     }
 
@@ -243,15 +250,23 @@ public class VentanaPrincipal extends JFrame {
     }
 
     public void cargarDatosEnFormulario(String nombre, String apellido, String telefono) {
-        txtNombre.setText(nombre);
-        txtApellido.setText(apellido);
-        txtTelefono.setText(telefono);
+        txtNombre.setText(nombre != null ? nombre : "");
+        txtApellido.setText(apellido != null ? apellido : "");
+        txtTelefono.setText(telefono != null ? telefono : "");
     }
 
+    // ✅ CORREGIDO: Mostrar mensaje con colores claros
     public void mostrarMensaje(String mensaje, boolean esError) {
         lblEstado.setText(mensaje);
-        lblEstado.setForeground(esError
-                ? ComponentesGraficos.PELIGRO : ComponentesGraficos.EXITO);
+        if (esError) {
+            lblEstado.setForeground(Color.RED);
+            lblEstado.setBackground(new Color(255, 200, 200));
+        } else {
+            lblEstado.setForeground(new Color(0, 150, 0));
+            lblEstado.setBackground(new Color(200, 255, 200));
+        }
+        lblEstado.setOpaque(true);
+        lblEstado.repaint();
     }
 
     public void mostrarEspaciosLibres(int espacios) {
