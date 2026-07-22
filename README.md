@@ -1,7 +1,7 @@
 # 📒 Agenda Telefónica MVC
 
 Aplicación de escritorio desarrollada en **Java Swing** utilizando el patrón de arquitectura **Modelo - Vista - Controlador (MVC)** y **Gradle** como herramienta de automatización de compilación y gestión de dependencias.
-
+Con mecanismo de lectura y escritura automática de datos en un archivo local plano cada vez que se agregue.
 ---
 
 # 👥 Equipo de Desarrollo
@@ -74,6 +74,10 @@ El proyecto fue desarrollado siguiendo el patrón de diseño **MVC**, permitiend
 ```bash[
 https://github.com/Ale20222/agenda-telefonica
 ```
+```bash[
+https://youtu.be/kHyILBwpS9E
+```
+
 
 
 También puede ejecutarse directamente desde IntelliJ IDEA.
