@@ -90,7 +90,7 @@ public class AgendaControlador {
                 throw new IllegalArgumentException("❌ Nombre y apellido son obligatorios");
             }
 
-            Contacto contacto = new Contacto(nombre(), apellido(), "");
+            Contacto contacto = new Contacto(nombre(), apellido());
             boolean eliminado = agenda.eliminarContacto(contacto);
             if (!eliminado) {
                 throw new IllegalStateException("❌ No se encontró el contacto");
